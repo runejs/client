@@ -1,3 +1,6 @@
+# System
+.DS_Store
+
 # Jetbrains
 .idea
 
@@ -6,3 +9,6 @@ node_modules
 
 # Artifacts
 dist
+
+# Game Assets
+cache

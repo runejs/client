@@ -11,4 +11,4 @@ node_modules
 dist
 
 # Game Assets
-cache
+main_file_cache.*

@@ -12,9 +12,6 @@
         "baseUrl": ".",
         "allowJs": true,
         "outDir": "./dist/",
-        "paths": {
-            "@client/*": ["src/*"]
-        },
         "types": [
             "node"
         ],

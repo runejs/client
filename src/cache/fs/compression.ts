@@ -7,6 +7,8 @@ export function decompress(buffer: ByteBuffer, keys?: number[]): { compression: 
     const compression = buffer.get('BYTE', 'UNSIGNED');
     const length = buffer.get('INT');
 
+    console.log(compression, length);
+
     if(compression == 0) {
         const data = new ByteBuffer(length);
         buffer.copy(data, 0, buffer.readerIndex, length);

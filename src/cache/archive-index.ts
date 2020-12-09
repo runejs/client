@@ -1,8 +1,8 @@
-import { readIndexEntry } from '@client/cache/fs/cache-fs';
-import { Archive } from '@client/cache/archive';
-import { FileData } from '@client/cache/file-data';
-import { CacheChannel } from '@client/cache/fs/channels';
-import { decompress } from '@client/cache/fs/compression';
+import { readIndexEntry } from './fs/cache-fs';
+import { Archive } from './archive';
+import { FileData } from './file-data';
+import { CacheChannel } from './fs/channels';
+import { decompress } from './fs/compression';
 
 
 const flagName = 0x01;

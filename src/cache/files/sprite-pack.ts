@@ -1,5 +1,5 @@
 import { PNG } from 'pngjs';
-import { Archive } from '@client/cache/archive';
+import { ByteBuffer } from '@runejs/core';
 
 
 function toRgba(num: number): number[] {
@@ -58,16 +58,17 @@ export class Sprite {
 
 export class SpritePack {
 
-    public readonly archive: Archive;
+    public readonly archive: ByteBuffer;
     public readonly packId: number;
+    private _sprites: Sprite[];
 
-    public constructor(archive: Archive, packId: number) {
-        this.archive = archive;
+    public constructor(buffer: ByteBuffer, packId: number) {
+        this.archive = buffer;
         this.packId = packId;
     }
 
     public decode(): void {
-        const { content: buffer } = this.archive.getFile(this.packId);
+        const buffer = this.archive;
 
         if(buffer.length === 0) {
             throw new Error(`Empty file content for Sprite Pack ${this.packId}.`);
@@ -163,7 +164,12 @@ export class SpritePack {
                     sprite.pixels[j] = palette[index] | (pixelAlphas[j] << 24);
                 }
             }
+
+            this._sprites = sprites;
         }
     }
 
+    public get sprites(): Sprite[] {
+        return this._sprites;
+    }
 }

@@ -1,9 +1,9 @@
 import { ByteBuffer } from '@runejs/core';
-import { FileData } from '@client/cache/file-data';
-import { ArchiveIndex } from '@client/cache/archive-index';
-import { CacheChannel } from '@client/cache/fs/channels';
-import { readIndexEntry } from '@client/cache/fs/cache-fs';
-import { decompress } from '@client/cache/fs/compression';
+import { FileData } from './file-data';
+import { ArchiveIndex } from './archive-index';
+import { CacheChannel } from './fs/channels';
+import { readIndexEntry } from './fs/cache-fs';
+import { decompress } from './fs/compression';
 
 
 export class Archive extends FileData {
@@ -36,6 +36,8 @@ export class Archive extends FileData {
         const archiveFile = readIndexEntry(this.fileId, this.index.indexId, this.cacheChannel);
         const  { compression, version, buffer } = decompress(archiveFile.dataFile);
         const archiveSize = this.index.archives.size;
+
+        this.content = buffer;
 
         this.version = version;
         this.content = buffer;

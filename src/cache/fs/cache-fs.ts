@@ -1,9 +1,9 @@
 import { ByteBuffer } from '@runejs/core';
-import { CacheChannel } from '@client/cache/fs/channels';
+import { CacheChannel } from './channels';
 
 
 export const indexFileLength = 6;
-export const dataFileLength = 512;
+export const dataChunkLength = 512;
 export const sectorLength = 520;
 
 
@@ -61,6 +61,7 @@ export const readDataFile = (fileId: number, indexFile: IndexFile, dataChannel: 
     do {
         let buf = new ByteBuffer(sectorLength);
         dataChannel.copy(buf, 0, ptr, ptr + sectorLength);
+
         if(buf.readable != sectorLength) {
             throw new Error(`Not Enough Readable Sector Data: Buffer contains ${buf.readable} but needed ${sectorLength}`);
         }
@@ -69,13 +70,13 @@ export const readDataFile = (fileId: number, indexFile: IndexFile, dataChannel: 
         const sectorChunk = buf.get('SHORT', 'UNSIGNED');
         const nextSector = buf.get('INT24');
         const sectorIndex = buf.get('BYTE', 'UNSIGNED');
-        const data = new ByteBuffer(dataFileLength);
-        buf.copy(data, 0, buf.readerIndex, buf.readerIndex + dataFileLength);
+        const sectorData = new ByteBuffer(dataChunkLength);
+        buf.copy(sectorData, 0, buf.readerIndex, buf.readerIndex + dataChunkLength);
 
-        if(remaining > dataFileLength) {
-            data.copy(data, data.writerIndex, 0, dataFileLength);
-            data.writerIndex = (data.writerIndex + dataFileLength);
-            remaining -= dataFileLength;
+        if(remaining > dataChunkLength) {
+            sectorData.copy(data, data.writerIndex, 0, dataChunkLength);
+            data.writerIndex = (data.writerIndex + dataChunkLength);
+            remaining -= dataChunkLength;
 
             if(sectorIndex !== indexFile.indexId) {
                 throw new Error('File type mismatch.');

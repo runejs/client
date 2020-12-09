@@ -1,5 +1,6 @@
 import { app, BrowserWindow } from 'electron';
 import * as path from 'path';
+import { AssetCache } from './cache/asset-cache';
 
 
 function createWindow() {
@@ -12,6 +13,10 @@ function createWindow() {
     });
 
     mainWindow.loadFile(path.join(__dirname, '../index.html'));
+
+    const assetCache = new AssetCache('cache');
+    const spritePacks = assetCache.decodeSpritePacks();
+    console.log('Sprite Packs: ' + spritePacks);
 
     // mainWindow.webContents.openDevTools();
 }

@@ -92,7 +92,7 @@ export const readDataFile = (fileId: number, indexFile: IndexFile, dataChannel: 
 
             ptr = nextSector * sectorLength;
         } else {
-            data.copy(data, data.writerIndex, 0, remaining);
+            sectorData.copy(data, data.writerIndex, 0, remaining);
             data.writerIndex = (data.writerIndex + remaining);
             remaining = 0;
         }

@@ -33,6 +33,7 @@
     },
     "dependencies": {
         "@runejs/core": "^1.0.0-beta.0",
+        "node-properties-parser": "0.0.2",
         "pngjs": "^6.0.0",
         "rxjs": "^6.6.3",
         "seek-bzip": "^2.0.0",

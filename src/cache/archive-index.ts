@@ -1,4 +1,4 @@
-import { readIndexEntry } from './fs/cache-fs';
+import { readIndexEntry } from './fs/fs';
 import { Archive } from './archive';
 import { FileData } from './file-data';
 import { CacheChannel } from './fs/channels';
@@ -23,9 +23,19 @@ export class ArchiveIndex {
         this.cacheChannel = cacheChannel;
     }
 
-    public getArchive(archiveId: number): Archive {
+    public getArchive(archiveId: number, decode: boolean = true): Archive | null {
         const archive = this.archives.get(archiveId);
-        archive.decodeArchive();
+
+        if(!archive) {
+            return null;
+        }
+
+        if(decode) {
+            archive.decodeArchive();
+        } else {
+            archive.decompress();
+        }
+
         return archive;
     }
 

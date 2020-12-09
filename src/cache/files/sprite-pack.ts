@@ -58,11 +58,13 @@ export class Sprite {
 
 export class SpritePack {
 
+    public readonly nameHash: number;
     public readonly archive: ByteBuffer;
     public readonly packId: number;
     private _sprites: Sprite[];
 
-    public constructor(buffer: ByteBuffer, packId: number) {
+    public constructor(nameHash: number, buffer: ByteBuffer, packId: number) {
+        this.nameHash = nameHash;
         this.archive = buffer;
         this.packId = packId;
     }

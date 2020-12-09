@@ -2,7 +2,7 @@ import { ByteBuffer } from '@runejs/core';
 import { FileData } from './file-data';
 import { ArchiveIndex } from './archive-index';
 import { CacheChannel } from './fs/channels';
-import { readIndexEntry } from './fs/cache-fs';
+import { readIndexEntry } from './fs/fs';
 import { decompress } from './fs/compression';
 
 
@@ -14,7 +14,6 @@ export class Archive extends FileData {
     public version: number;
     public compression: number;
     public files: Map<number, FileData>;
-    public decoded: boolean = false;
     private readonly cacheChannel: CacheChannel;
 
     public constructor(id: number, index: ArchiveIndex, cacheChannel: CacheChannel) {
@@ -28,13 +27,15 @@ export class Archive extends FileData {
         return this.files.get(fileId);
     }
 
-    public decodeArchive(): void {
-        if(this.decoded) {
-            return;
-        }
+    public decompress(): void {
+        const archiveEntry = readIndexEntry(this.fileId, this.index.indexId, this.cacheChannel);
+        const { buffer } = decompress(archiveEntry.dataFile);
+        this.content = buffer;
+    }
 
-        const archiveFile = readIndexEntry(this.fileId, this.index.indexId, this.cacheChannel);
-        const  { compression, version, buffer } = decompress(archiveFile.dataFile);
+    public decodeArchive(): void {
+        const archiveEntry = readIndexEntry(this.fileId, this.index.indexId, this.cacheChannel);
+        const  { compression, version, buffer } = decompress(archiveEntry.dataFile);
         const archiveSize = this.index.archives.size;
 
         this.content = buffer;
@@ -74,8 +75,6 @@ export class Archive extends FileData {
                 buffer.readerIndex = (buffer.readerIndex + chunkSize);
             }
         }
-
-        this.decoded = true;
     }
 
 }

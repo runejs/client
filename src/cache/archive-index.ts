@@ -1,28 +1,41 @@
-import { IndexEntry } from '@client/cache/fs/cache-fs';
-import { ByteBuffer } from '@runejs/core';
+import { readIndexEntry } from '@client/cache/fs/cache-fs';
 import { Archive } from '@client/cache/archive';
 import { FileData } from '@client/cache/file-data';
 import { CacheChannel } from '@client/cache/fs/channels';
+import { decompress } from '@client/cache/fs/compression';
+
+
+const flagName = 0x01;
+const flagWhirlpool = 0x02;
 
 export class ArchiveIndex {
-
-    public static readonly FLAG_NAME = 0x01;
-    public static readonly FLAG_WHIRLPOOL = 0x02;
 
     public readonly indexId: number;
     public format: number;
     public version: number;
+    public compression: number;
     public flags: number;
     public archives: Map<number, Archive> = new Map<number, Archive>();
     private readonly cacheChannel: CacheChannel;
 
-    public constructor(indexEntry: IndexEntry, cacheChannel: CacheChannel) {
-        this.indexId = indexEntry.indexFile.indexId;
+    public constructor(indexId: number, cacheChannel: CacheChannel) {
+        this.indexId = indexId;
         this.cacheChannel = cacheChannel;
-        this.decodeIndex(indexEntry.dataFile);
     }
 
-    private decodeIndex(buffer: ByteBuffer): void {
+    public getArchive(archiveId: number): Archive {
+        const archive = this.archives.get(archiveId);
+        archive.decodeArchive();
+        return archive;
+    }
+
+    public decodeIndex(): void {
+        const indexEntry = readIndexEntry(this.indexId, 255, this.cacheChannel);
+        const { compression, version, buffer } = decompress(indexEntry.dataFile);
+
+        this.version = version;
+        this.compression = compression;
+
         /* read header */
         this.format = buffer.get('BYTE', 'UNSIGNED');
         if(this.format >= 6) {
@@ -47,7 +60,7 @@ export class ArchiveIndex {
         }
 
         /* read the name hashes if present */
-        if((this.flags & ArchiveIndex.FLAG_NAME) != 0) {
+        if((this.flags & flagName) != 0) {
             for(const id of ids) {
                 this.archives.get(id).nameHash = buffer.get('INT');
             }
@@ -59,7 +72,7 @@ export class ArchiveIndex {
         }
 
         /* read the whirlpool digests */
-        if((this.flags & ArchiveIndex.FLAG_WHIRLPOOL) != 0) {
+        if((this.flags & flagWhirlpool) != 0) {
             for(const id of ids) {
                 buffer.copy(this.archives.get(id).whirlpool, 0,
                     buffer.readerIndex, buffer.readerIndex + 64);
@@ -100,7 +113,7 @@ export class ArchiveIndex {
         }
 
         /* read the child name hashes */
-        if((this.flags & ArchiveIndex.FLAG_NAME) != 0) {
+        if((this.flags & flagName) != 0) {
             for(const id of ids) {
                 for(const childId of members[id]) {
                     this.archives.get(id).files.get(childId).nameHash = buffer.get('INT');

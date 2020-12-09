@@ -1,6 +1,6 @@
 import { app, BrowserWindow } from 'electron';
 import * as path from 'path';
-import { FileStore } from './cache/file-store';
+import { FileStore } from './file-store/file-store';
 
 
 function createWindow() {

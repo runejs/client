@@ -10,7 +10,7 @@ function toRgba(num: number): number[] {
         g = (num & 0xFF00) >>> 8,
         r = (num & 0xFF0000) >>> 16,
         a = ( (num & 0xFF000000) >>> 24 ) / 255;
-    return [r, g, b, a];
+    return [ r, g, b, a ];
 }
 
 export class Sprite {
@@ -32,6 +32,23 @@ export class Sprite {
         this.maxHeight = height;
     }
 
+    public async toBase64(): Promise<string> {
+        return new Promise(async resolve => {
+            const png = this.toPng();
+            png.pack();
+
+            const chunks = [];
+
+            png.on('data', (chunk) => {
+                chunks.push(chunk);
+            });
+            png.on('end', () => {
+                const str = Buffer.concat(chunks).toString('base64');
+                resolve(str);
+            });
+        });
+    }
+
     public toPng(): PNG {
         const png = new PNG({
             width: this.width,
@@ -43,12 +60,12 @@ export class Sprite {
             for(let y = 0; y < this.height; y++) {
                 const pixel = this.pixels[this.width * y + x];
                 const alpha = pixel >> 24;
-                const rgba = toRgba(pixel);
+                const [ r, g, b ] = toRgba(pixel);
                 const pngIndex = (this.width * y + x) << 2;
 
-                png.data[pngIndex] = rgba[0];
-                png.data[pngIndex + 1] = rgba[1];
-                png.data[pngIndex + 2] = rgba[2];
+                png.data[pngIndex] = r;
+                png.data[pngIndex + 1] = g;
+                png.data[pngIndex + 2] = b;
                 png.data[pngIndex + 3] = alpha;
             }
         }
@@ -187,6 +204,16 @@ export class SpriteStore {
 
     public constructor(fileStore: FileStore) {
         this.fileStore = fileStore;
+    }
+
+    public getPack(name: string): SpritePack {
+        const nameHash = hash(name);
+        for(const pack of this.spritePacks) {
+            if(nameHash === pack.nameHash) {
+                return pack;
+            }
+        }
+        return null;
     }
 
     public getImage(name: string, index: number = 0): PNG {

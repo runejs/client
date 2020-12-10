@@ -30,6 +30,21 @@ body {
 }
 
 #title-background-right {
-    left: 383px;
+    right: 0;
     transform: rotateY(180deg);
+}
+
+#runes-left, #runes-right {
+    position: absolute;
+    bottom: 250px;
+    width: 100px;
+    height: 100px;
+}
+
+#runes-left {
+    left: 0;
+}
+
+#runes-right {
+    right: 0;
 }

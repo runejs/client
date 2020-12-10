@@ -15,10 +15,12 @@ function createWindow() {
     mainWindow.loadFile(path.join(__dirname, '../index.html'));
 
     const fileStore = new FileStore('cache');
-    const spritePacks = fileStore.decodeSpritePacks();
-    for(const pack of spritePacks) {
-        console.log(fileStore.getFileName(pack.nameHash));
-    }
+    fileStore.spriteStore.decodeSpritePacks();
+
+    console.log(fileStore.spriteStore.getImage('logo'));
+
+    const titleImg = fileStore.getBinaryIndex().getArchive(0, false);
+    console.log(titleImg.content);
 
     // mainWindow.webContents.openDevTools();
 }

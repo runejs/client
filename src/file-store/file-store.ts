@@ -1,24 +1,26 @@
 import { CacheChannel, loadCacheChannels } from './fs/channels';
 import { ArchiveIndex } from './archive-index';
-import { SpritePack } from './files/sprite-pack';
+import { SpriteStore } from './stores/sprite-store';
 import { getFileNames } from './util/name-hash';
+
+
+export const fileNames = getFileNames('cache'); // @TODO configurable
+
+export const getFileName = (nameHash: number): string | null => {
+    return fileNames[nameHash.toString()] || nameHash.toString();
+};
 
 
 export class FileStore {
 
     public readonly dir: string;
+    public readonly spriteStore = new SpriteStore(this);
     private readonly channels: CacheChannel;
     private readonly indexes = new Map<number, ArchiveIndex>();
-    private readonly fileNames: { [key: string]: string };
 
     public constructor(dir: string) {
         this.dir = dir;
         this.channels = loadCacheChannels(dir);
-        this.fileNames = getFileNames(dir);
-    }
-
-    public getFileName(nameHash: number): string | null {
-        return this.fileNames[nameHash.toString()] || nameHash.toString();
     }
 
     public getIndex(indexId: number): ArchiveIndex {
@@ -32,24 +34,12 @@ export class FileStore {
         }
     }
 
-    public decodeSpritePacks(): SpritePack[] {
-        const spritePackIndex = this.getIndex(8);
-        const packCount = spritePackIndex.archives.size;
-        const spritePacks: SpritePack[] = [];
+    public getSpriteIndex(): ArchiveIndex {
+        return this.getIndex(5);
+    }
 
-        for(let spritePackId = 0; spritePackId < packCount; spritePackId++) {
-            const archive = spritePackIndex.getArchive(spritePackId, false);
-            if(!archive) {
-                console.log(`No archive found for sprite pack ${spritePackId}`);
-                continue;
-            }
-
-            const spritePack = new SpritePack(archive.nameHash, archive.content, spritePackId);
-            spritePack.decode();
-            spritePacks.push(spritePack);
-        }
-
-        return spritePacks;
+    public getBinaryIndex(): ArchiveIndex {
+        return this.getIndex(10);
     }
 
 }

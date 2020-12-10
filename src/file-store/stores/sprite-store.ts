@@ -1,5 +1,7 @@
 import { PNG } from 'pngjs';
 import { ByteBuffer } from '@runejs/core';
+import { FileStore } from '../file-store';
+import { hash } from '../util/name-hash';
 
 
 function toRgba(num: number): number[] {
@@ -174,4 +176,56 @@ export class SpritePack {
     public get sprites(): Sprite[] {
         return this._sprites;
     }
+}
+
+
+export class SpriteStore {
+
+    public spritePacks: SpritePack[] = [];
+    private readonly fileStore: FileStore;
+    private readonly imageCache: Map<string, PNG> = new Map<string, PNG>();
+
+    public constructor(fileStore: FileStore) {
+        this.fileStore = fileStore;
+    }
+
+    public getImage(name: string, index: number = 0): PNG {
+        if(this.imageCache.has(name)) {
+            return this.imageCache.get(name);
+        }
+
+        let spritePack: SpritePack;
+        const nameHash = hash(name);
+        for(const pack of this.spritePacks) {
+            if(nameHash === pack.nameHash) {
+                spritePack = pack;
+                break;
+            }
+        }
+
+        this.imageCache.set(name, spritePack?.sprites[index]?.toPng() || null);
+        return spritePack?.sprites[index]?.toPng() || null;
+    }
+
+    public decodeSpritePacks(): SpritePack[] {
+        const spritePackIndex = this.fileStore.getIndex(8);
+        const packCount = spritePackIndex.archives.size;
+        const spritePacks: SpritePack[] = [];
+
+        for(let spritePackId = 0; spritePackId < packCount; spritePackId++) {
+            const archive = spritePackIndex.getArchive(spritePackId, false);
+            if(!archive) {
+                console.log(`No archive found for sprite pack ${spritePackId}`);
+                continue;
+            }
+
+            const spritePack = new SpritePack(archive.nameHash, archive.content, spritePackId);
+            spritePack.decode();
+            spritePacks.push(spritePack);
+        }
+
+        this.spritePacks = spritePacks;
+        return spritePacks;
+    }
+
 }

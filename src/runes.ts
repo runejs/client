@@ -25,14 +25,14 @@ function calculateFlamePositions(runeImage: Sprite) {
 
     let c = 256;
     for(let x = 0; x < 5000; x++) {
-        let rand = Math.round(c * (128.0 * Math.random()));
-        anIntArray1168[rand] = 256.0 * Math.random();
+        const pixelIdx = Math.round(c * (128.0 * Math.random()));
+        anIntArray1168[pixelIdx] = 256.0 * Math.random();
     }
 
     for(let i = 0; i < 20; i++) {
         for(let j = 1; -1 + c > j; j++) {
             for(let k = 1; k < 127; k++) {
-                let pixel = (j << 7) + k;
+                const pixel = (j << 7) + k;
                 anIntArray1445[pixel] = (anIntArray1168[pixel - 128] +
                     anIntArray1168[pixel + -1] +
                     anIntArray1168[pixel + 1] +
@@ -49,10 +49,10 @@ function calculateFlamePositions(runeImage: Sprite) {
         let pixelIdx = 0;
         for(let y = 0; runeImage.height > y; y++) {
             for(let x = 0; x < runeImage.width; x++) {
-                if(runeImage.pixels[pixelIdx++] != 0) {
-                    let yOffset = runeImage.offsetY + y + 16;
-                    let xOffset = runeImage.offsetX + x + 16;
-                    let pixel = xOffset + (yOffset << 7);
+                if(runeImage.pixels[pixelIdx++] !== 0) {
+                    const yOffset = runeImage.offsetY + y + 16;
+                    const xOffset = runeImage.offsetX + x + 16;
+                    const pixel = xOffset + (yOffset << 7);
                     anIntArray1168[pixel] = 0;
                 }
             }
@@ -73,14 +73,15 @@ export function buildFlames(runes: Sprite[]): void {
     for(let i = 0; i < 100; i++) {
         const randX = Math.round((Math.random() * 124.0) + 2);
         const randY = Math.round(128 + Math.random() * 128.0);
-        const pixelIdx = Math.round(randX + (randY << 7));
+        const pixelIdx = randX + (randY << 7);
         anIntArray178[pixelIdx] = 192;
     }
 
     for(let y = 1; y < height - 1; y++) {
         for(let x = 1; x < 127; x++) {
-            const rand = Math.round(x + (y << 7));
-            anIntArray3255[rand] = (anIntArray178[rand + 1] + anIntArray178[rand - 1] - (-anIntArray178[rand - 128] - anIntArray178[128 + rand])) / 4;
+            const rand = x + (y << 7);
+            anIntArray3255[rand] = Math.round((anIntArray178[rand + 1] + anIntArray178[rand - 1] -
+                (-anIntArray178[rand - 128] - anIntArray178[128 + rand])) / 4);
         }
     }
 
@@ -93,12 +94,12 @@ export function buildFlames(runes: Sprite[]): void {
 
     for(let y = 1; y < -1 + height; y++) {
         for(let x = 1; x < 127; x++) {
-            const pixelIdx = Math.round(x + (y << 7));
-            let value = -(anIntArray1168[pixelIdx + anInt1641 & -1 + anIntArray1168.length] / 5) + anIntArray3255[pixelIdx + 128];
+            const pixelIdx = x + (y << 7);
+            let value = Math.round(-(anIntArray1168[pixelIdx + anInt1641 & -1 + anIntArray1168.length] / 5)) + anIntArray3255[pixelIdx + 128];
             if(value < 0) {
                 value = 0;
             }
-            anIntArray178[pixelIdx] = Math.round(value);
+            anIntArray178[pixelIdx] = value;
         }
     }
 
@@ -106,7 +107,7 @@ export function buildFlames(runes: Sprite[]): void {
         yIndexes[i] = yIndexes[i + 1];
     }
 
-    yIndexes[height - 1] = Math.round((16.0 * Math.sin(loopCycle / 14.0) + 14.0 * Math.sin(loopCycle / 15.0) + 12.0 * Math.sin(loopCycle / 16.0)));
+    yIndexes[height - 1] = (16.0 * Math.sin(loopCycle / 14.0) + 14.0 * Math.sin(loopCycle / 15.0) + 12.0 * Math.sin(loopCycle / 16.0));
 
     if(anInt2452 > 0) {
         anInt2452 -= 4;
@@ -136,7 +137,7 @@ function arrayCopy(src: number[], srcPos: number, dest: number[], destPos: numbe
 
 function calc(arg1: number, arg2: number, arg3: number): number {
     const i = 256 - arg3;
-    return Math.round((arg3 * (0xff00 & arg2) + i * (0xff00 & arg1) & 0xff0000) + (~0xff00ff & (0xff00ff & arg1) * i + arg3 * (0xff00ff & arg2)) >> 8);
+    return (arg3 * (0xff00 & arg2) + i * (0xff00 & arg1) & 0xff0000) + (~0xff00ff & (0xff00ff & arg1) * i + arg3 * (0xff00ff & arg2)) >> 8;
 }
 
 function mixColors(color1: number, color2: number): number {
@@ -148,11 +149,11 @@ export function renderFlames() {
         if(anInt2613 > 0) {
             for(let i = 0; i < 256; i++) {
                 if(anInt2613 > 768) {
-                    anIntArray1013[i] = calc(seedData1[i], seedData3[i], -anInt2613 + 1024);
+                    anIntArray1013[i] = Math.round(calc(seedData1[i], seedData3[i], -anInt2613 + 1024));
                 } else if(anInt2613 > 256) {
-                    anIntArray1013[i] = seedData3[i];
+                    anIntArray1013[i] = Math.round(seedData3[i]);
                 } else {
-                    anIntArray1013[i] = calc(seedData3[i], seedData1[i], -anInt2613 + 256);
+                    anIntArray1013[i] = Math.round(calc(seedData3[i], seedData1[i], -anInt2613 + 256));
                 }
             }
         } else {
@@ -162,12 +163,12 @@ export function renderFlames() {
         for(let i = 0; i < 256; i++) {
             if(anInt2452 <= 768) {
                 if(anInt2452 > 256) {
-                    anIntArray1013[i] = seedData2[i];
+                    anIntArray1013[i] = Math.round(seedData2[i]);
                 } else {
-                    anIntArray1013[i] = calc(seedData2[i], seedData1[i], -anInt2452 + 256);
+                    anIntArray1013[i] = Math.round(calc(seedData2[i], seedData1[i], -anInt2452 + 256));
                 }
             } else {
-                anIntArray1013[i] = calc(seedData1[i], seedData2[i], -anInt2452 + 1024);
+                anIntArray1013[i] = Math.round(calc(seedData1[i], seedData2[i], -anInt2452 + 1024));
             }
         }
     }
@@ -179,38 +180,47 @@ export function renderFlames() {
     let height = 256;
     let indexX = 0;
     let pixelIdx = 1152;
+
     for(let y = 1; height - 1 > y; y++) {
         const startX = Math.round((height - y) * yIndexes[y] / height);
         let offsetX = startX + 22;
         if(offsetX < 0) {
             offsetX = 0;
         }
+
         indexX += offsetX;
+
         for(let x = offsetX; x < 128; x++) {
             let random1 = anIntArray178[indexX++];
-            if(random1 != 0) {
-                let random2 = -random1 + 256;
-                let random3 = random1;
+
+            if(random1 !== 0) {
+                const random2 = -random1 + 256;
+                const random3 = random1;
                 random1 = anIntArray1013[random1];
-                let originalPixel = flameBackground.pixels[pixelIdx];
-                flameBackground.pixels[pixelIdx++] = mixColors(-16711936, mixColors(random1, 16711935) * random3 + random2 *
-                    mixColors(originalPixel, 16711935)) + mixColors(mixColors(65280, originalPixel) * random2 + random3 * mixColors(65280, random1), 16711680) >> 8;
+                const originalPixel = flameBackground.pixels[pixelIdx];
+
+                flameBackground.pixels[pixelIdx++] = mixColors(-16711936, mixColors(random1, 16711935) *
+                    random3 + random2 * mixColors(originalPixel, 16711935)) + mixColors(mixColors(65280,
+                    originalPixel) * random2 + random3 * mixColors(65280, random1), 16711680) >> 8;
             } else {
                 pixelIdx++;
             }
         }
+
         pixelIdx += offsetX;
     }
 }
 
 function getPixels(startX: number, startY: number, width: number, height: number, pixelBuffer: number[]): number[] {
-    const newPixels = new Array(width * height).fill(0);
+    const newPixels = new Array(width * height);
+
     for(let x = startX; x < width; x++) {
         for(let y = startY; y < height; y++) {
             const pixelIdx = x + (y << 7);
             newPixels[pixelIdx] = pixelBuffer[pixelIdx];
         }
     }
+
     return newPixels;
 }
 

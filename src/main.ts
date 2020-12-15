@@ -12,7 +12,8 @@ const pixelGetter = (img: Jimp) => {
 
     for(let x = 0; x < width; x++) {
         for(let y = 0; y < height; y++) {
-            pixels[width * y + x] = img.getPixelColor(x, y);
+            const pixelIdx = x + (y << 7);
+            pixels[pixelIdx] = img.getPixelColor(x, y);
         }
     }
 

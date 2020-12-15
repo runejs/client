@@ -78,7 +78,7 @@ export class Sprite {
         for(let x = 0; x < this.width; x++) {
             for(let y = 0; y < this.height; y++) {
                 const pixel = this.pixels[this.width * y + x];
-                const [ r, g, b ] = alpha ? toRgba(pixel) : toRgb(pixel);
+                const [ r, g, b ] = toRgba(pixel);
                 const pngIndex = (this.width * y + x) << 2;
 
                 png.data[pngIndex] = r;
@@ -87,6 +87,8 @@ export class Sprite {
 
                 if(alpha) {
                     png.data[pngIndex + 3] = pixel >> 24;
+                } else {
+                    png.data[pngIndex + 3] = 1;
                 }
             }
         }

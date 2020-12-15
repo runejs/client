@@ -36,9 +36,9 @@ body {
 
 #runes-left, #runes-right {
     position: absolute;
-    bottom: 250px;
-    width: 100px;
-    height: 100px;
+    top: 0;
+    width: 128px;
+    height: 265px;
 }
 
 #runes-left {
@@ -47,4 +47,5 @@ body {
 
 #runes-right {
     right: 0;
+    transform: rotateY(180deg);
 }

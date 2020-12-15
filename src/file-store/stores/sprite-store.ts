@@ -13,6 +13,14 @@ function toRgba(num: number): number[] {
     return [ r, g, b, a ];
 }
 
+function toRgb(num: number): number[] {
+    num >>>= 0;
+    const b = num & 0xFF,
+        g = (num & 0xFF00) >>> 8,
+        r = (num & 0xFF0000) >>> 16;
+    return [ r, g, b ];
+}
+
 export class Sprite {
 
     spriteId: number;
@@ -32,24 +40,35 @@ export class Sprite {
         this.maxHeight = height;
     }
 
-    public async toBase64(): Promise<string> {
-        return new Promise(async resolve => {
-            const png = this.toPng();
-            png.pack();
+    public autoSize(): Sprite {
+        this.width = this.maxWidth;
+        this.height = this.maxHeight;
+        return this;
+    }
 
-            const chunks = [];
+    public async toBase64(alpha: boolean = true): Promise<string> {
+        return new Promise(async (resolve, reject) => {
+            const png = this.toPng(alpha);
 
-            png.on('data', (chunk) => {
-                chunks.push(chunk);
-            });
-            png.on('end', () => {
-                const str = Buffer.concat(chunks).toString('base64');
-                resolve(str);
-            });
+            try {
+                png.pack();
+
+                const chunks = [];
+
+                png.on('data', (chunk) => {
+                    chunks.push(chunk);
+                });
+                png.on('end', () => {
+                    const str = Buffer.concat(chunks).toString('base64');
+                    resolve(str);
+                });
+            } catch(error) {
+                reject(error);
+            }
         });
     }
 
-    public toPng(): PNG {
+    public toPng(alpha: boolean = true): PNG {
         const png = new PNG({
             width: this.width,
             height: this.height,
@@ -59,14 +78,16 @@ export class Sprite {
         for(let x = 0; x < this.width; x++) {
             for(let y = 0; y < this.height; y++) {
                 const pixel = this.pixels[this.width * y + x];
-                const alpha = pixel >> 24;
-                const [ r, g, b ] = toRgba(pixel);
+                const [ r, g, b ] = alpha ? toRgba(pixel) : toRgb(pixel);
                 const pngIndex = (this.width * y + x) << 2;
 
                 png.data[pngIndex] = r;
                 png.data[pngIndex + 1] = g;
                 png.data[pngIndex + 2] = b;
-                png.data[pngIndex + 3] = alpha;
+
+                if(alpha) {
+                    png.data[pngIndex + 3] = pixel >> 24;
+                }
             }
         }
 

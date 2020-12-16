@@ -2,12 +2,12 @@ import { Sprite } from './file-store/stores/sprite-store';
 import { BrowserWindow } from 'electron';
 
 
-let anIntArray178 = new Array(32768).fill(0);
-let anIntArray3255 = new Array(32768).fill(0);
-let anIntArray1168 = new Array(32768).fill(0);
-let anIntArray1445 = new Array(32768).fill(0);
+let unknownArr100 = new Array(32768).fill(0);
+let unknownArr200 = new Array(32768).fill(0);
+let unknownArr300 = new Array(32768).fill(0);
+let unknownArr400 = new Array(32768).fill(0);
 let yIndexes = new Array(256).fill(0);
-let anIntArray1013 = new Array(256).fill(0);
+let unknownArr500 = new Array(256).fill(0);
 const seedData1 = new Array(256).fill(0);
 const seedData2 = new Array(256).fill(0);
 const seedData3 = new Array(256).fill(0);
@@ -20,32 +20,32 @@ let anInt2452 = 0;
 let anInt2613 = 0;
 
 
-function calculateFlamePositions(runeImage: Sprite) {
-    anIntArray1168 = new Array(32768).fill(0);
+function calculateFlamePositions(runeImage: Sprite | null) {
+    unknownArr300 = new Array(32768).fill(0);
 
-    let c = 256;
+    let height = 256;
     for(let x = 0; x < 5000; x++) {
-        const pixelIdx = Math.round(c * (128.0 * Math.random()));
-        anIntArray1168[pixelIdx] = 256.0 * Math.random();
+        const pixelIdx = Math.round(height * (128.0 * Math.random()));
+        unknownArr300[pixelIdx] = 256.0 * Math.random();
     }
 
     for(let i = 0; i < 20; i++) {
-        for(let j = 1; -1 + c > j; j++) {
-            for(let k = 1; k < 127; k++) {
-                const pixel = (j << 7) + k;
-                anIntArray1445[pixel] = (anIntArray1168[pixel - 128] +
-                    anIntArray1168[pixel + -1] +
-                    anIntArray1168[pixel + 1] +
-                    anIntArray1168[128 + pixel]) / 4;
+        for(let y = 1; height - 1 > y; y++) {
+            for(let x = 1; x < 127; x++) {
+                const pixel = (y << 7) + x;
+                unknownArr400[pixel] = (unknownArr300[pixel - 128] +
+                    unknownArr300[pixel - 1] +
+                    unknownArr300[pixel + 1] +
+                    unknownArr300[128 + pixel]) / 4;
             }
         }
 
-        const is: number[] = anIntArray1168;
-        anIntArray1168 = anIntArray1445;
-        anIntArray1445 = is;
+        const is: number[] = unknownArr300;
+        unknownArr300 = unknownArr400;
+        unknownArr400 = is;
     }
 
-    if(runeImage != null) {
+    if(runeImage) {
         let pixelIdx = 0;
         for(let y = 0; runeImage.height > y; y++) {
             for(let x = 0; x < runeImage.width; x++) {
@@ -53,7 +53,7 @@ function calculateFlamePositions(runeImage: Sprite) {
                     const yOffset = runeImage.offsetY + y + 16;
                     const xOffset = runeImage.offsetX + x + 16;
                     const pixel = xOffset + (yOffset << 7);
-                    anIntArray1168[pixel] = 0;
+                    unknownArr300[pixel] = 0;
                 }
             }
         }
@@ -66,7 +66,7 @@ export function buildFlames(runes: Sprite[]): void {
     for(let i = 10; i < 117; i++) {
         const rand = Math.round(Math.random() * 100.0);
         if(rand < 50) {
-            anIntArray178[(height - 2 << 7) + i] = 255;
+            unknownArr100[(height - 2 << 7) + i] = 255;
         }
     }
 
@@ -74,20 +74,20 @@ export function buildFlames(runes: Sprite[]): void {
         const randX = Math.round((Math.random() * 124.0) + 2);
         const randY = Math.round(128 + Math.random() * 128.0);
         const pixelIdx = randX + (randY << 7);
-        anIntArray178[pixelIdx] = 192;
+        unknownArr100[pixelIdx] = 192;
     }
 
     for(let y = 1; y < height - 1; y++) {
         for(let x = 1; x < 127; x++) {
-            const rand = x + (y << 7);
-            anIntArray3255[rand] = Math.round((anIntArray178[rand + 1] + anIntArray178[rand - 1] -
-                (-anIntArray178[rand - 128] - anIntArray178[128 + rand])) / 4);
+            const pixelIdx = x + (y << 7);
+            unknownArr200[pixelIdx] = Math.round((unknownArr100[pixelIdx + 1] + unknownArr100[pixelIdx - 1] -
+                (-unknownArr100[pixelIdx - 128] - unknownArr100[128 + pixelIdx])) / 4);
         }
     }
 
     anInt1641 += 128;
-    if(anInt1641 > anIntArray1168.length) {
-        anInt1641 -= anIntArray1168.length;
+    if(anInt1641 > unknownArr300.length) {
+        anInt1641 -= unknownArr300.length;
         const runeIdx = Math.round(12.0 * Math.random());
         calculateFlamePositions(runes[runeIdx]);
     }
@@ -95,11 +95,11 @@ export function buildFlames(runes: Sprite[]): void {
     for(let y = 1; y < -1 + height; y++) {
         for(let x = 1; x < 127; x++) {
             const pixelIdx = x + (y << 7);
-            let value = Math.round(-(anIntArray1168[pixelIdx + anInt1641 & -1 + anIntArray1168.length] / 5)) + anIntArray3255[pixelIdx + 128];
+            let value = Math.round(-(unknownArr300[pixelIdx + anInt1641 & -1 + unknownArr300.length] / 5)) + unknownArr200[pixelIdx + 128];
             if(value < 0) {
                 value = 0;
             }
-            anIntArray178[pixelIdx] = value;
+            unknownArr100[pixelIdx] = value;
         }
     }
 
@@ -149,26 +149,26 @@ export function renderFlames() {
         if(anInt2613 > 0) {
             for(let i = 0; i < 256; i++) {
                 if(anInt2613 > 768) {
-                    anIntArray1013[i] = Math.round(calc(seedData1[i], seedData3[i], -anInt2613 + 1024));
+                    unknownArr500[i] = Math.round(calc(seedData1[i], seedData3[i], -anInt2613 + 1024));
                 } else if(anInt2613 > 256) {
-                    anIntArray1013[i] = Math.round(seedData3[i]);
+                    unknownArr500[i] = Math.round(seedData3[i]);
                 } else {
-                    anIntArray1013[i] = Math.round(calc(seedData3[i], seedData1[i], -anInt2613 + 256));
+                    unknownArr500[i] = Math.round(calc(seedData3[i], seedData1[i], -anInt2613 + 256));
                 }
             }
         } else {
-            arrayCopy(seedData1, 0, anIntArray1013, 0, 256);
+            arrayCopy(seedData1, 0, unknownArr500, 0, 256);
         }
     } else {
         for(let i = 0; i < 256; i++) {
             if(anInt2452 <= 768) {
                 if(anInt2452 > 256) {
-                    anIntArray1013[i] = Math.round(seedData2[i]);
+                    unknownArr500[i] = Math.round(seedData2[i]);
                 } else {
-                    anIntArray1013[i] = Math.round(calc(seedData2[i], seedData1[i], -anInt2452 + 256));
+                    unknownArr500[i] = Math.round(calc(seedData2[i], seedData1[i], -anInt2452 + 256));
                 }
             } else {
-                anIntArray1013[i] = Math.round(calc(seedData1[i], seedData2[i], -anInt2452 + 1024));
+                unknownArr500[i] = Math.round(calc(seedData1[i], seedData2[i], -anInt2452 + 1024));
             }
         }
     }
@@ -191,12 +191,12 @@ export function renderFlames() {
         indexX += offsetX;
 
         for(let x = offsetX; x < 128; x++) {
-            let random1 = anIntArray178[indexX++];
+            let random1 = unknownArr100[indexX++];
 
             if(random1 !== 0) {
                 const random2 = -random1 + 256;
                 const random3 = random1;
-                random1 = anIntArray1013[random1];
+                random1 = unknownArr500[random1];
                 const originalPixel = flameBackground.pixels[pixelIdx];
 
                 flameBackground.pixels[pixelIdx++] = mixColors(-16711936, mixColors(random1, 16711935) *
@@ -211,25 +211,12 @@ export function renderFlames() {
     }
 }
 
-function getPixels(startX: number, startY: number, width: number, height: number, pixelBuffer: number[]): number[] {
-    const newPixels = new Array(width * height);
-
-    for(let x = startX; x < width; x++) {
-        for(let y = startY; y < height; y++) {
-            const pixelIdx = x + (y << 7);
-            newPixels[pixelIdx] = pixelBuffer[pixelIdx];
-        }
-    }
-
-    return newPixels;
-}
-
 async function resetFlames(titlePixels: number[]): Promise<void> {
     if(!flameBackground.pixels || flameBackground.pixels.length === 0) {
         flameBackground.pixels = new Array(33920).fill(0);
     }
 
-    flameBackground.pixels = getPixels(0, 0, 128, 265, titlePixels);
+    flameBackground.pixels = titlePixels;
 
     titleBackgroundPixels.pixels = new Array(33920).fill(0);
     arrayCopy(flameBackground.pixels, 0, titleBackgroundPixels.pixels, 0, 33920);
@@ -273,12 +260,12 @@ async function resetFlames(titlePixels: number[]): Promise<void> {
         seedData3[192 + i] = 16777215;
     }
 
-    anIntArray1013 = new Array(256).fill(0);
-    anIntArray1445 = new Array(32768).fill(0);
-    anIntArray1168 = new Array(32768).fill(0);
+    unknownArr500 = new Array(256).fill(0);
+    unknownArr400 = new Array(32768).fill(0);
+    unknownArr300 = new Array(32768).fill(0);
     calculateFlamePositions(null);
-    anIntArray3255 = new Array(32768).fill(0);
-    anIntArray178 = new Array(32768).fill(0);
+    unknownArr200 = new Array(32768).fill(0);
+    unknownArr100 = new Array(32768).fill(0);
 }
 
 export function sendRunes(mainWindow: BrowserWindow, runes: Sprite[]): void {
@@ -297,7 +284,7 @@ export async function drawFlames(runes: Sprite[], titlePixels, mainWindow: Brows
             renderFlames();
 
             const flameBase64 = await flameBackground.toBase64();
-            const flameBackgroundUrl = `url(data:image/png;base64,${flameBase64})`;
+            const flameBackgroundUrl = `transparent url(data:image/png;base64,${flameBase64})`;
 
             mainWindow.webContents.executeJavaScript(`
             document.getElementById('runes-left').style.background = '${flameBackgroundUrl}';

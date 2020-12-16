@@ -5,19 +5,23 @@ import { drawFlames } from './runes';
 import Jimp from 'jimp';
 
 
-const pixelGetter = (img: Jimp) => {
-    const width = img.getWidth();
-    const height = img.getHeight();
-    const pixels: number[] = new Array(width * height);
+const pixelGetter = async (image: Jimp) => {
+    return new Promise(resolve => {
+        const width = 128;
+        const height = 265;
+        const pixels: number[] = new Array(width * height);
 
-    for(let x = 0; x < width; x++) {
-        for(let y = 0; y < height; y++) {
+        image.scan(0, 0, width, height, (x, y, idx) => {
+            const red = image.bitmap.data[idx];
+            const green = image.bitmap.data[idx + 1];
+            const blue = image.bitmap.data[idx + 2];
+
             const pixelIdx = x + (y << 7);
-            pixels[pixelIdx] = img.getPixelColor(x, y);
-        }
-    }
-
-    return pixels;
+            pixels[pixelIdx] = (red << 16) + (green << 8) + (blue);
+        }, () => {
+            resolve(pixels);
+        });
+    });
 }
 
 
@@ -30,7 +34,8 @@ async function startUp(mainWindow: BrowserWindow): Promise<void> {
 
     const titleImageBinary = fileStore.getBinaryIndex().getArchive(0, false);
     const titleImage = await Jimp.read(Buffer.from(titleImageBinary.content));
-    const titleImagePixels = pixelGetter(titleImage);
+    titleImage.rgba(false);
+    const titleImagePixels = await pixelGetter(titleImage);
     const titleImageBase64 = await titleImage.getBase64Async('image/jpeg');
 
     // sendRunes(mainWindow, titleImagePixels, fileStore.spriteStore.getPack('runes').sprites);

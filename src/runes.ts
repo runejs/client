@@ -268,14 +268,15 @@ async function resetFlames(titlePixels: number[]): Promise<void> {
     unknownArr100 = new Array(32768).fill(0);
 }
 
-export function sendRunes(mainWindow: BrowserWindow, runes: Sprite[]): void {
-    mainWindow.webContents.send('asynchronous-message', {
+export function sendRunes(mainWindow: BrowserWindow, titlePixels, runes: Sprite[]): void {
+    mainWindow.webContents.send('synchronous-message', {
         type: 'runes',
-        runes
+        runes,
+        titlePixels
     });
 }
 
-export async function drawFlames(runes: Sprite[], titlePixels, mainWindow: BrowserWindow): Promise<void> {
+export async function drawFlames(runes: Sprite[], titlePixels, mainWindow: Document): Promise<void> {
     await resetFlames(titlePixels);
 
     setInterval(async () => {
@@ -286,10 +287,8 @@ export async function drawFlames(runes: Sprite[], titlePixels, mainWindow: Brows
             const flameBase64 = await flameBackground.toBase64();
             const flameBackgroundUrl = `transparent url(data:image/png;base64,${flameBase64})`;
 
-            mainWindow.webContents.executeJavaScript(`
-            document.getElementById('runes-left').style.background = '${flameBackgroundUrl}';
-            document.getElementById('runes-right').style.background = '${flameBackgroundUrl}';
-            `);
+            mainWindow.getElementById('runes-left').style.background = flameBackgroundUrl;
+            mainWindow.getElementById('runes-right').style.background = flameBackgroundUrl;
         } catch(error) {
             console.warn(error);
         }

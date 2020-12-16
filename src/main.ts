@@ -1,9 +1,11 @@
 import { app, BrowserWindow } from 'electron';
 import * as path from 'path';
 import { FileStore } from './file-store/file-store';
-import { drawFlames } from './runes';
+import { sendRunes } from './runes';
 import Jimp from 'jimp';
 
+
+let mainWindow: BrowserWindow;
 
 const pixelGetter = async (image: Jimp) => {
     return new Promise(resolve => {
@@ -28,7 +30,7 @@ const pixelGetter = async (image: Jimp) => {
 require('source-map-support').install();
 
 
-async function startUp(mainWindow: BrowserWindow): Promise<void> {
+async function startUp(): Promise<void> {
     const fileStore = new FileStore('cache');
     fileStore.spriteStore.decodeSpritePacks();
 
@@ -38,8 +40,7 @@ async function startUp(mainWindow: BrowserWindow): Promise<void> {
     const titleImagePixels = await pixelGetter(titleImage);
     const titleImageBase64 = await titleImage.getBase64Async('image/jpeg');
 
-    // sendRunes(mainWindow, titleImagePixels, fileStore.spriteStore.getPack('runes').sprites);
-    drawFlames(fileStore.spriteStore.getPack('runes').sprites, titleImagePixels, mainWindow);
+    sendRunes(mainWindow, titleImagePixels, fileStore.spriteStore.getPack('runes').sprites);
 
     const bgUrl = `url(${titleImageBase64})`;
 
@@ -49,21 +50,43 @@ async function startUp(mainWindow: BrowserWindow): Promise<void> {
     `);
 }
 
-function createWindow() {
-    const mainWindow = new BrowserWindow({
+function openDevToolsWindow(): void {
+    const devtools = new BrowserWindow();
+    mainWindow.webContents.setDevToolsWebContents(devtools.webContents);
+    mainWindow.webContents.openDevTools({ mode: 'detach' });
+
+    mainWindow.webContents.once('did-finish-load', () => {
+        const windowBounds = mainWindow.getBounds();
+        devtools.setPosition(windowBounds.x + windowBounds.width, windowBounds.y);
+        devtools.setSize(400, 503);
+    });
+
+    mainWindow.on('move',  () => {
+        const windowBounds = mainWindow.getBounds();
+        devtools.setPosition(windowBounds.x + windowBounds.width, windowBounds.y);
+    });
+}
+
+async function createWindow(): Promise<void> {
+    mainWindow = new BrowserWindow({
         height: 503,
         width: 765,
-        //width: 1100,
+        // width: 1100,
+        resizable: false,
         webPreferences: {
             preload: path.join(__dirname, 'preload.js'),
+            nodeIntegration: true,
+            contextIsolation: false,
+            nodeIntegrationInWorker: true
         }
     });
 
-    mainWindow.loadFile(path.join(__dirname, '../index.html'));
+    openDevToolsWindow();
 
-    startUp(mainWindow);
+    await mainWindow.loadFile(path.join(__dirname, '../index.html'));
+    // mainWindow.webContents.openDevTools();
 
-    //mainWindow.webContents.openDevTools();
+    await startUp();
 }
 
 app.on('ready', () => {
@@ -79,3 +102,4 @@ app.on('ready', () => {
 app.on('window-all-closed', () => {
     app.quit();
 });
+

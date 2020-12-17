@@ -3,9 +3,6 @@ import { ipcRenderer } from 'electron';
 
 ipcRenderer.on('synchronous-message', (event, args) => {
     if(args.type === 'runes') {
-        drawFlames(args.runes, args.titlePixels, document);
+        drawFlames(args.runes, args.titlePixels);
     }
 });
-
-console.log('Hello world!');
-

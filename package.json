@@ -6,7 +6,7 @@
     "scripts": {
         "build": "tsc",
         "watch": "tsc -w",
-        "start": "npm run build && electron ./dist/main.js"
+        "start": "npm run build && electron --js-flags=\"--max_old_space_size=4096\" ./dist/main.js"
     },
     "repository": {
         "type": "git",

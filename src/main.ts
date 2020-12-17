@@ -50,28 +50,11 @@ async function startUp(): Promise<void> {
     `);
 }
 
-function openDevToolsWindow(): void {
-    const devtools = new BrowserWindow();
-    mainWindow.webContents.setDevToolsWebContents(devtools.webContents);
-    mainWindow.webContents.openDevTools({ mode: 'detach' });
-
-    mainWindow.webContents.once('did-finish-load', () => {
-        const windowBounds = mainWindow.getBounds();
-        devtools.setPosition(windowBounds.x + windowBounds.width, windowBounds.y);
-        devtools.setSize(400, 503);
-    });
-
-    mainWindow.on('move',  () => {
-        const windowBounds = mainWindow.getBounds();
-        devtools.setPosition(windowBounds.x + windowBounds.width, windowBounds.y);
-    });
-}
-
 async function createWindow(): Promise<void> {
     mainWindow = new BrowserWindow({
         height: 503,
-        width: 765,
-        // width: 1100,
+        //width: 765,
+        width: 1100,
         resizable: false,
         webPreferences: {
             preload: path.join(__dirname, 'preload.js'),
@@ -81,10 +64,8 @@ async function createWindow(): Promise<void> {
         }
     });
 
-    openDevToolsWindow();
-
     await mainWindow.loadFile(path.join(__dirname, '../index.html'));
-    // mainWindow.webContents.openDevTools();
+    mainWindow.webContents.openDevTools();
 
     await startUp();
 }

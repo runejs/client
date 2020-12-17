@@ -53,10 +53,11 @@ async function startUp(): Promise<void> {
 
 async function createWindow(): Promise<void> {
     mainWindow = new BrowserWindow({
-        height: 503,
+        //height: 503,
         //width: 765,
-        width: 1100,
-        resizable: false,
+        height: 560,
+        width: 1300,
+        resizable: true,
         webPreferences: {
             preload: path.join(__dirname, 'preload.js'),
             nodeIntegration: true,

@@ -40,7 +40,8 @@ async function startUp(): Promise<void> {
     const titleImagePixels = await pixelGetter(titleImage);
     const titleImageBase64 = await titleImage.getBase64Async('image/jpeg');
 
-    sendRunes(mainWindow, titleImagePixels, fileStore.spriteStore.getPack('runes').sprites);
+    sendRunes(mainWindow, titleImagePixels, fileStore.spriteStore.getPack('runes').sprites
+        .filter(sprite => sprite !== undefined && sprite !== null));
 
     const bgUrl = `url(${titleImageBase64})`;
 

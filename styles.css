@@ -81,8 +81,21 @@ body {
     height: 200px;
 }
 
+#landing {
+    padding-top: 65px;
+}
+#welcome {
+    color: #ffff00;
+    font-weight: bold;
+    text-align: center;
+    text-shadow: 1px 1px #000;
+}
+
 .title-button {
+    margin-left: 27px;
     width: 147px;
     height: 41px;
     line-height: 41px;
+    /*margin-top: 65px;*/
+    margin-top: 35px;
 }

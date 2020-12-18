@@ -60,10 +60,6 @@ async function startUp(): Promise<void> {
     const titleBoxSprite = fileStore.spriteStore.getPack('titlebox').sprites[0];
     const titleButtonSprite = fileStore.spriteStore.getPack('titlebutton').sprites[0];
 
-    console.log(logoSprite.width, logoSprite.height);
-    console.log(titleBoxSprite.width, titleBoxSprite.height);
-    console.log(titleButtonSprite.width, titleButtonSprite.height);
-
     sendSprite('logo', await logoSprite.toBase64());
     sendSprite('titleBox', await titleBoxSprite.toBase64());
     sendSprite('titleButton', await titleButtonSprite.toBase64());

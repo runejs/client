@@ -1,8 +1,8 @@
 import { app, BrowserWindow } from 'electron';
 import * as path from 'path';
 import { FileStore } from './file-store/file-store';
-import { sendRunes } from './runes';
 import Jimp from 'jimp';
+import { Sprite } from './file-store/stores/sprite-store';
 
 
 let mainWindow: BrowserWindow;
@@ -29,7 +29,20 @@ const pixelGetter = async (image: Jimp) => {
 
 require('source-map-support').install();
 
+function sendRunes(titlePixels, runes: Sprite[]): void {
+    mainWindow.webContents.send('synchronous-message', {
+        type: 'runes',
+        runes,
+        titlePixels
+    });
+}
 
+function sendSprite(name: string, base64: string): void {
+    mainWindow.webContents.send('synchronous-message', {
+        type: name,
+        base64
+    });
+}
 async function startUp(): Promise<void> {
     const fileStore = new FileStore('cache');
     fileStore.spriteStore.decodeSpritePacks();
@@ -40,12 +53,24 @@ async function startUp(): Promise<void> {
     const titleImagePixels = await pixelGetter(titleImage);
     const titleImageBase64 = await titleImage.getBase64Async('image/jpeg');
 
-    sendRunes(mainWindow, titleImagePixels, fileStore.spriteStore.getPack('runes').sprites
+    sendRunes(titleImagePixels, fileStore.spriteStore.getPack('runes').sprites
         .filter(sprite => sprite !== undefined && sprite !== null));
+
+    const logoSprite = fileStore.spriteStore.getPack('logo').sprites[0];
+    const titleBoxSprite = fileStore.spriteStore.getPack('titlebox').sprites[0];
+    const titleButtonSprite = fileStore.spriteStore.getPack('titlebutton').sprites[0];
+
+    console.log(logoSprite.width, logoSprite.height);
+    console.log(titleBoxSprite.width, titleBoxSprite.height);
+    console.log(titleButtonSprite.width, titleButtonSprite.height);
+
+    sendSprite('logo', await logoSprite.toBase64());
+    sendSprite('titleBox', await titleBoxSprite.toBase64());
+    sendSprite('titleButton', await titleButtonSprite.toBase64());
 
     const bgUrl = `url(${titleImageBase64})`;
 
-    mainWindow.webContents.executeJavaScript(`
+    await mainWindow.webContents.executeJavaScript(`
     document.getElementById('title-background-left').style.background = '${bgUrl}';
     document.getElementById('title-background-right').style.background = '${bgUrl}';
     `);

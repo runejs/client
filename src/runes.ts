@@ -271,14 +271,6 @@ async function resetFlames(titlePixels: number[]): Promise<void> {
     unknownArr100 = new Array(32768).fill(0);
 }
 
-export function sendRunes(mainWindow: BrowserWindow, titlePixels, runes: Sprite[]): void {
-    mainWindow.webContents.send('synchronous-message', {
-        type: 'runes',
-        runes,
-        titlePixels
-    });
-}
-
 export function stopFlameDrawing(): void {
     flameDrawingEnabled = false;
 }

@@ -11,13 +11,24 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 13px;
+    color: #fff;
 }
 
-#startup, #title-background {
+#startup {
     position: relative;
     width: 765px;
     height: 503px;
     overflow: hidden;
+}
+
+#title-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
 }
 
 #title-background-left, #title-background-right {
@@ -50,4 +61,28 @@ body {
 #runes-right {
     right: 0;
     transform: rotateY(180deg);
+}
+
+#logo {
+    position: relative;
+    z-index: 2;
+    padding-top: 18px;
+}
+#logo img {
+    display: block;
+    margin: 0 auto;
+}
+
+#title-box {
+    position: relative;
+    z-index: 2;
+    margin: 11px auto 0;
+    width: 360px;
+    height: 200px;
+}
+
+.title-button {
+    width: 147px;
+    height: 41px;
+    line-height: 41px;
 }

@@ -9,6 +9,3 @@ node_modules
 
 # Artifacts
 dist
-
-# Game Assets
-main_file_cache.*

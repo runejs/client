@@ -1,6 +1,7 @@
 import { drawFlames } from './runes';
 import { ipcRenderer } from 'electron';
 
+
 async function showLogo(base64: string): Promise<void> {
     const img = document.createElement('img') as HTMLImageElement;
     img.src = `data:image/png;base64,${base64}`;

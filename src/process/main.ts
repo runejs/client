@@ -1,8 +1,9 @@
 import { app, BrowserWindow } from 'electron';
 import * as path from 'path';
-import { FileStore } from './file-store/file-store';
 import Jimp from 'jimp';
-import { Sprite } from './file-store/stores/sprite-store';
+import { Filestore, Sprite } from '@runejs/filestore';
+
+require('source-map-support').install();
 
 
 let mainWindow: BrowserWindow;
@@ -26,9 +27,6 @@ const pixelGetter = async (image: Jimp) => {
     });
 }
 
-
-require('source-map-support').install();
-
 function sendRunes(titlePixels, runes: Sprite[]): void {
     mainWindow.webContents.send('synchronous-message', {
         type: 'runes',
@@ -43,9 +41,9 @@ function sendSprite(name: string, base64: string): void {
         base64
     });
 }
+
 async function startUp(): Promise<void> {
-    const fileStore = new FileStore('cache');
-    fileStore.spriteStore.decodeSpritePacks();
+    const fileStore = new Filestore('filestore');
 
     const titleImageBinary = fileStore.getBinaryIndex().getArchive(0, false);
     const titleImage = await Jimp.read(Buffer.from(titleImageBinary.content));
@@ -53,12 +51,23 @@ async function startUp(): Promise<void> {
     const titleImagePixels = await pixelGetter(titleImage);
     const titleImageBase64 = await titleImage.getBase64Async('image/jpeg');
 
-    sendRunes(titleImagePixels, fileStore.spriteStore.getPack('runes').sprites
-        .filter(sprite => sprite !== undefined && sprite !== null));
+    const runeSpritePack = fileStore.spriteStore.getSpritePack('runes');
+    runeSpritePack.decode();
 
-    const logoSprite = fileStore.spriteStore.getPack('logo').sprites[0];
-    const titleBoxSprite = fileStore.spriteStore.getPack('titlebox').sprites[0];
-    const titleButtonSprite = fileStore.spriteStore.getPack('titlebutton').sprites[0];
+    sendRunes(titleImagePixels, runeSpritePack.sprites.filter(sprite => sprite !== undefined && sprite !== null));
+
+    const logoSpritePack = fileStore.spriteStore.getSpritePack('logo');
+    logoSpritePack.decode();
+
+    const titleBoxSpritePack = fileStore.spriteStore.getSpritePack('titlebox');
+    titleBoxSpritePack.decode();
+
+    const titleButtonSpritePack = fileStore.spriteStore.getSpritePack('titlebutton');
+    titleButtonSpritePack.decode();
+
+    const logoSprite = logoSpritePack.sprites[0];
+    const titleBoxSprite = titleBoxSpritePack.sprites[0];
+    const titleButtonSprite = titleButtonSpritePack.sprites[0];
 
     sendSprite('logo', await logoSprite.toBase64());
     sendSprite('titleBox', await titleBoxSprite.toBase64());
@@ -87,7 +96,8 @@ async function createWindow(): Promise<void> {
         }
     });
 
-    await mainWindow.loadFile(path.join(__dirname, '../index.html'));
+    await mainWindow.loadFile(path.join(__dirname, '../../index.html'));
+
     mainWindow.webContents.openDevTools();
 
     await startUp();

@@ -1,6 +1,5 @@
-import { Sprite } from './file-store/stores/sprite-store';
-import { BrowserWindow } from 'electron';
-import { wait } from './util/scheduling';
+import { Sprite } from '@runejs/filestore';
+import { wait } from '../util/scheduling';
 
 
 let flameDrawingEnabled: boolean = true;

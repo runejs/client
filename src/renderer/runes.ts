@@ -302,8 +302,13 @@ export async function drawFlames(runes: Sprite[], titlePixels): Promise<void> {
     await resetFlames(titlePixels);
 
     const leftCanvas = document.getElementById('runes-left') as HTMLCanvasElement;
-    const leftCanvasContext = leftCanvas.getContext('2d');
     const rightCanvas = document.getElementById('runes-right') as HTMLCanvasElement;
+
+    if(!leftCanvas || !rightCanvas) {
+        return;
+    }
+
+    const leftCanvasContext = leftCanvas.getContext('2d');
     const rightCanvasContext = rightCanvas.getContext('2d');
     const imageData = leftCanvasContext.getImageData(0, 0, leftCanvas.width, leftCanvas.height);
 

@@ -79,6 +79,9 @@ body {
     margin: 11px auto 0;
     width: 360px;
     height: 200px;
+    font-family: 'RS Bold', sans-serif;
+    font-size: 16px;
+    text-shadow: 1px 1px #000;
 }
 
 #title-button-container {
@@ -91,9 +94,6 @@ body {
     width: 147px;
     height: 41px;
     line-height: 41px;
-    font-family: 'RS Bold', sans-serif;
-    font-size: 16px;
-    text-shadow: 1px 1px #000;
     text-align: center;
     cursor: pointer;
     position: absolute;
@@ -106,11 +106,41 @@ body {
     right: 0;
 }
 
+#welcome, #existing-user {
+    color: #ffff00;
+    text-align: center;
+}
 #welcome {
     padding-top: 69px;
-    color: #ffff00;
+}
+#existing-user {
+    padding-top: 46px;
+}
+
+form#credentials {
+    margin-top: 24px;
+    display: flex;
+    flex-wrap: wrap;
+}
+form#credentials label {
+    display: block;
+    width: 45%;
+    cursor: pointer;
+    text-align: right;
+    color: white;
+}
+form#credentials input {
+    background: transparent;
+    border-width: 0;
+    outline-width: 0;
+    cursor: text;
+    display: block;
+    width: 55%;
+    color: white;
     font-family: 'RS Bold', sans-serif;
+    box-sizing: border-box;
     font-size: 16px;
     text-shadow: 1px 1px #000;
-    text-align: center;
+    padding: 0 6px;
+    line-height: 16px;
 }

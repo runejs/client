@@ -56,12 +56,18 @@ export default class Startup extends Component<{}, StartupState> {
                 <div id="title-box" style={{
                     background: `url('data:image/png;base64,${this.state.titleBoxBase64}')`
                 }}>
-                    <div className="title-button" style={{
-                        background: `url('data:image/png;base64,${this.state.titleButtonBase64}')`
-                    }}>Create an Account</div>
-                    <div className="title-button" style={{
-                        background: `url('data:image/png;base64,${this.state.titleButtonBase64}')`
-                    }}>Play Game</div>
+                    <div id="welcome">
+                        Welcome to RuneJS
+                    </div>
+
+                    <div id="title-button-container">
+                        <div className="title-button" style={{
+                            background: `url('data:image/png;base64,${this.state.titleButtonBase64}')`
+                        }}>New User</div>
+                        <div className="title-button" style={{
+                            background: `url('data:image/png;base64,${this.state.titleButtonBase64}')`
+                        }}>Existing User</div>
+                    </div>
                 </div>
             </div>
         );

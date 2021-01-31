@@ -81,21 +81,36 @@ body {
     height: 200px;
 }
 
-#landing {
-    padding-top: 65px;
-}
-#welcome {
-    color: #ffff00;
-    font-weight: bold;
-    text-align: center;
-    text-shadow: 1px 1px #000;
+#title-button-container {
+    position: relative;
+    margin: 16px 28px 0;
+    height: 41px;
 }
 
 .title-button {
-    margin-left: 27px;
     width: 147px;
     height: 41px;
     line-height: 41px;
-    /*margin-top: 65px;*/
-    margin-top: 35px;
+    font-family: 'RS Bold', sans-serif;
+    font-size: 16px;
+    text-shadow: 1px 1px #000;
+    text-align: center;
+    cursor: pointer;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.title-button ~ .title-button {
+    left: initial;
+    right: 0;
+}
+
+#welcome {
+    padding-top: 69px;
+    color: #ffff00;
+    font-family: 'RS Bold', sans-serif;
+    font-size: 16px;
+    text-shadow: 1px 1px #000;
+    text-align: center;
 }

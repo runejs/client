@@ -79,6 +79,14 @@ async function startUp(): Promise<void> {
     document.getElementById('title-background-left').style.background = '${bgUrl}';
     document.getElementById('title-background-right').style.background = '${bgUrl}';
     `);
+
+    const scapeMainMidi = fileStore.midiStore.decodeMidiStore()[0];
+    const midi = Buffer.from(scapeMainMidi.content);
+    if(scapeMainMidi) {
+        mainWindow.webContents.send('synchronous-message', {
+            type: 'song', midi
+        });
+    }
 }
 
 async function createWindow(): Promise<void> {

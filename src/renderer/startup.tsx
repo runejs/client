@@ -81,7 +81,16 @@ export default class Startup extends Component<{}, StartupState> {
             </>;
 
             views['new_user'] = <>
-                New User
+                <div id="new-user">
+                    Currently Unavailable
+                </div>
+
+                <div id="title-button-container">
+                    <div className="title-button single" style={ {
+                        background: `url('data:image/png;base64,${ this.state.titleButtonBase64 }')`
+                    } } onClick={ this.back }>Back
+                    </div>
+                </div>
             </>;
 
             views['existing_user'] = <>

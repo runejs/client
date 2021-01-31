@@ -100,13 +100,16 @@ body {
     top: 0;
     left: 0;
 }
-
 .title-button ~ .title-button {
     left: initial;
     right: 0;
 }
+.title-button.single {
+    position: relative;
+    margin: 32px auto 0;
+}
 
-#welcome, #existing-user {
+#welcome, #existing-user, #new-user {
     color: #ffff00;
     text-align: center;
 }
@@ -114,6 +117,9 @@ body {
     padding-top: 69px;
 }
 #existing-user {
+    padding-top: 46px;
+}
+#new-user {
     padding-top: 46px;
 }
 

@@ -60,54 +60,56 @@ export default class Startup extends Component<{}, StartupState> {
     };
 
     render(): JSX.Element {
-        if(!this.state.titleButtonBase64 || !this.state.titleBoxBase64) {
-            return <></>;
-        }
-
         const views: { [key: string]: JSX.Element } = {};
 
-        views['welcome'] = <>
-            <div id="welcome">
-                Welcome to RuneJS
-            </div>
+        if(this.state.titleButtonBase64 && this.state.titleBoxBase64) {
+            views['welcome'] = <>
+                <div id="welcome">
+                    Welcome to RuneJS
+                </div>
 
-            <div id="title-button-container">
-                <div className="title-button" style={{
-                    background: `url('data:image/png;base64,${this.state.titleButtonBase64}')`
-                }} onClick={this.openNewUser}>New User</div>
-                <div className="title-button" style={{
-                    background: `url('data:image/png;base64,${this.state.titleButtonBase64}')`
-                }} onClick={this.openExistingUser}>Existing User</div>
-            </div>
-        </>
+                <div id="title-button-container">
+                    <div className="title-button" style={ {
+                        background: `url('data:image/png;base64,${ this.state.titleButtonBase64 }')`
+                    } } onClick={ this.openNewUser }>New User
+                    </div>
+                    <div className="title-button" style={ {
+                        background: `url('data:image/png;base64,${ this.state.titleButtonBase64 }')`
+                    } } onClick={ this.openExistingUser }>Existing User
+                    </div>
+                </div>
+            </>;
 
-        views['new_user'] = <>
-            New User
-        </>
+            views['new_user'] = <>
+                New User
+            </>;
 
-        views['existing_user'] = <>
-            <div id="existing-user">
-                Enter your username &amp; password.
-            </div>
+            views['existing_user'] = <>
+                <div id="existing-user">
+                    Enter your username &amp; password.
+                </div>
 
-            <form id="credentials">
-                <label htmlFor="login-username">Username:</label>
-                <input type="text" maxLength={12} id="login-username" name="login-username"
-                       autoFocus={true} />
+                <form id="credentials">
+                    <label htmlFor="login-username">Username:</label>
+                    <input type="text" maxLength={ 12 } id="login-username" name="login-username"
+                           autoFocus={ true }/>
 
-                <label htmlFor="login-password">Password:</label>
-                <input type="password" maxLength={20} id="login-password" name="login-password"/>
-            </form>
+                    <label htmlFor="login-password">Password:</label>
+                    <input type="password" maxLength={ 20 } id="login-password" name="login-password"/>
+                </form>
 
-            <div id="title-button-container">
-                <div className="title-button" style={{
-                    background: `url('data:image/png;base64,${this.state.titleButtonBase64}')`
-                }}>Login</div>
-                <div className="title-button" style={{
-                    background: `url('data:image/png;base64,${this.state.titleButtonBase64}')`
-                }} onClick={this.back}>Cancel</div>
-            </div>
-        </>
+                <div id="title-button-container">
+                    <div className="title-button" style={ {
+                        background: `url('data:image/png;base64,${ this.state.titleButtonBase64 }')`
+                    } }>Login
+                    </div>
+                    <div className="title-button" style={ {
+                        background: `url('data:image/png;base64,${ this.state.titleButtonBase64 }')`
+                    } } onClick={ this.back }>Cancel
+                    </div>
+                </div>
+            </>;
+        }
 
         return (
             <div id="startup">

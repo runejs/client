@@ -70,7 +70,9 @@ body {
 }
 #logo img {
     display: block;
-    margin: 0 auto;
+    margin: 16px auto 32px;
+    max-width: 220px;
+    filter: drop-shadow(0 0 26px #fff);
 }
 
 #title-box {

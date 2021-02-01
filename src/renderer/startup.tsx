@@ -131,7 +131,7 @@ export default class Startup extends Component<{}, StartupState> {
                 <canvas id="runes-right" width="128" height="265"></canvas>
 
                 <div id="logo">
-                    <img src={ `data:image/png;base64,${this.state.logoBase64}` } />
+                    <img src="assets/runejs-logo-transparent.png" alt="RuneJS" />
                 </div>
 
                 <div id="title-box" style={{

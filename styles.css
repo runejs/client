@@ -150,3 +150,7 @@ form#credentials input {
     padding: 0 6px;
     line-height: 16px;
 }
+form#credentials input[type='password'] {
+    height: 16px;
+    font-size: 24px;
+}
